@@ -1,17 +1,37 @@
+locals {
+  ssh_key = "${var.aws_region}-ssh_key"
+}
+
+# @STOPPED - add parameters
+module "naming_convention" {
+  source  = "../../../../../terraform-modules/terraform-naming-convention"
+  team    = var.team
+  service = var.service
+  env     = var.env
+  role    = var.role
+}
+
+# module "core_infra_defaults" {
+#   source  = "../../../../../terraform-modules/terraform-core-infra-defaults"
+# }
+
 #######################
 # Launch configuration
 #######################
 resource "aws_launch_configuration" "this" {
   count = var.create_lc ? 1 : 0
 
-  name_prefix                 = "${coalesce(var.lc_name, var.name)}-"
+  #name_prefix                 = "${coalesce(var.lc_name, var.name)}-"
+  name_prefix                 = "${module.naming_convention.lanch_configuration}-${coalesce(var.lc_name, var.name)}"
   image_id                    = var.image_id
   instance_type               = var.instance_type
   iam_instance_profile        = var.iam_instance_profile
-  key_name                    = var.key_name
-  security_groups             = var.security_groups
+  key_name                    = "${coalesce(var.key_name,local.ssh_key)}"
+  security_groups             = "${concat(module.core_infra_defaults.security_groups,var.security_groups)}"
   associate_public_ip_address = var.associate_public_ip_address
-  user_data                   = var.user_data
+  
+  #user_data                   = var.user_data
+  user_data                   = "${module.core_infra_defaults.user_data}"
   enable_monitoring           = var.enable_monitoring
   spot_price                  = var.spot_price
   placement_tenancy           = var.spot_price == "" ? var.placement_tenancy : ""
@@ -60,15 +80,17 @@ resource "aws_launch_configuration" "this" {
 resource "aws_autoscaling_group" "this" {
   count = var.create_asg && false == var.create_asg_with_initial_lifecycle_hook ? 1 : 0
 
-  name_prefix = "${join(
-    "-",
-    compact(
-      [
-        coalesce(var.asg_name, var.name),
-        var.recreate_asg_when_lc_changes ? element(concat(random_pet.asg_name.*.id, [""]), 0) : "",
-      ],
-    ),
-  )}-"
+  name_prefix                 = "${module.naming_convention.autoscaling_group}-${coalesce(var.lc_name, var.name)}"
+
+  # name_prefix = "${join(
+  #   "-",
+  #   compact(
+  #     [
+  #       coalesce(var.asg_name, var.name),
+  #       var.recreate_asg_when_lc_changes ? element(concat(random_pet.asg_name.*.id, [""]), 0) : "",
+  #     ],
+  #   ),
+  # )}-"
   launch_configuration = var.create_lc ? element(concat(aws_launch_configuration.this.*.name, [""]), 0) : var.launch_configuration
   vpc_zone_identifier  = var.vpc_zone_identifier
   max_size             = var.max_size
@@ -92,17 +114,23 @@ resource "aws_autoscaling_group" "this" {
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
   protect_from_scale_in     = var.protect_from_scale_in
 
-  tags = concat(
-    [
-      {
-        "key"                 = "Name"
-        "value"               = var.name
-        "propagate_at_launch" = true
-      },
-    ],
+  tags = concat( 
+    module.core_infra_defaults.asg_tags,
     var.tags,
     local.tags_asg_format,
   )
+
+  # tags = concat( 
+  #   [
+  #     {
+  #       "key"                 = "Name"
+  #       "value"               = var.name
+  #       "propagate_at_launch" = true
+  #     },
+  #   ],
+  #   var.tags,
+  #   local.tags_asg_format,
+  # )
 
   lifecycle {
     create_before_destroy = true
@@ -115,15 +143,17 @@ resource "aws_autoscaling_group" "this" {
 resource "aws_autoscaling_group" "this_with_initial_lifecycle_hook" {
   count = var.create_asg && var.create_asg_with_initial_lifecycle_hook ? 1 : 0
 
-  name_prefix = "${join(
-    "-",
-    compact(
-      [
-        coalesce(var.asg_name, var.name),
-        var.recreate_asg_when_lc_changes ? element(concat(random_pet.asg_name.*.id, [""]), 0) : "",
-      ],
-    ),
-  )}-"
+  name_prefix                 = "${module.naming_convention.autoscaling_group}-${coalesce(var.lc_name, var.name)}"
+
+  # name_prefix = "${join(
+  #   "-",
+  #   compact(
+  #     [
+  #       coalesce(var.asg_name, var.name),
+  #       var.recreate_asg_when_lc_changes ? element(concat(random_pet.asg_name.*.id, [""]), 0) : "",
+  #     ],
+  #   ),
+  # )}-"
   launch_configuration = var.create_lc ? element(aws_launch_configuration.this.*.name, 0) : var.launch_configuration
   vpc_zone_identifier  = var.vpc_zone_identifier
   max_size             = var.max_size
@@ -157,14 +187,8 @@ resource "aws_autoscaling_group" "this_with_initial_lifecycle_hook" {
     default_result          = var.initial_lifecycle_hook_default_result
   }
 
-  tags = concat(
-    [
-      {
-        "key"                 = "Name"
-        "value"               = var.name
-        "propagate_at_launch" = true
-      },
-    ],
+  tags = concat( 
+    module.core_infra_defaults.asg_tags,
     var.tags,
     local.tags_asg_format,
   )
