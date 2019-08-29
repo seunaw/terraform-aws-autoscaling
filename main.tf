@@ -4,7 +4,7 @@ locals {
 
 # @STOPPED - add parameters
 module "naming_convention" {
-  source  = "../../../../../terraform-modules/terraform-naming-convention"
+  source  = "git::git@github.com:seunaw/terraform-naming-convention.git"
   team    = var.team
   service = var.service
   env     = var.env
