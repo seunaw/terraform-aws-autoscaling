@@ -3,12 +3,13 @@ locals {
 }
 
 # @STOPPED - add parameters
+# @TODO - change source to a variable
 module "naming_convention" {
-  source  = "git::git@github.com:seunaw/terraform-naming-convention.git"
-  team    = var.team
-  service = var.service
-  env     = var.env
-  role    = var.role
+  source    = "git::git@github.com:seunaw/terraform-naming-convention.git"
+  team      = var.team
+  service   = var.service
+  env       = var.env
+  component = var.component
 }
 
 # module "core_infra_defaults" {
