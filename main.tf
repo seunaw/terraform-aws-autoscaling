@@ -10,6 +10,7 @@ module "naming_convention" {
   service   = var.service
   env       = var.env
   component = var.component
+  region    = var.aws_region
 }
 
 # module "core_infra_defaults" {

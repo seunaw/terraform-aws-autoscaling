@@ -1,3 +1,10 @@
+variable "team" {}
+variable "service" {}
+variable "component" {}
+variable "env" {}
+variable "aws_region" {}
+
+
 variable "create_lc" {
   description = "Whether to create launch configuration"
   type        = bool
