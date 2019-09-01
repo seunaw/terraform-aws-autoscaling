@@ -123,7 +123,7 @@ resource "aws_autoscaling_group" "this" {
   protect_from_scale_in     = var.protect_from_scale_in
 
   tags = concat( 
-    module.core_infra_defaults.asg_tags,
+    module.naming_convention.asg_tags,
     var.tags,
     local.tags_asg_format,
   )
