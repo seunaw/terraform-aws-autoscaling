@@ -151,7 +151,7 @@ resource "aws_autoscaling_group" "this" {
 resource "aws_autoscaling_group" "this_with_initial_lifecycle_hook" {
   count = var.create_asg && var.create_asg_with_initial_lifecycle_hook ? 1 : 0
 
-  name_prefix                 = "${module.naming_convention.autoscaling_group}-${coalesce(var.lc_name, var.name)}"
+  name_prefix                 = "${module.naming_convention.name_prefix}-${coalesce(var.lc_name, var.name)}"
 
   # name_prefix = "${join(
   #   "-",
