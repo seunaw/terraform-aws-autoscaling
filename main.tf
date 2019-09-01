@@ -13,9 +13,15 @@ module "naming_convention" {
   aws_region  = var.aws_region
 }
 
-# module "core_infra_defaults" {
-#   source  = "../../../../../terraform-modules/terraform-core-infra-defaults"
-# }
+module "core_infra_defaults" {
+  source      = "git::git@github.com:seunaw/terraform-core-infra-defaults.git"
+  team        = var.team
+  service     = var.service
+  env         = var.env
+  # @TODO make this a list to pass in multiple components
+  component   = var.component
+  aws_region  = var.aws_region
+}
 
 #######################
 # Launch configuration
