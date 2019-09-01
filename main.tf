@@ -29,11 +29,11 @@ resource "aws_launch_configuration" "this" {
   instance_type               = var.instance_type
   iam_instance_profile        = var.iam_instance_profile
   key_name                    = "${coalesce(var.key_name,local.ssh_key)}"
-  security_groups             = "${concat(module.core_infra_defaults.security_groups,var.security_groups)}"
+  security_groups             = "${concat(module.core_infra_defaults.default_security_groups,var.security_groups)}"
   associate_public_ip_address = var.associate_public_ip_address
   
   #user_data                   = var.user_data
-  user_data                   = "${module.core_infra_defaults.user_data}"
+  user_data                   = "${module.core_infra_defaults.instance_userdata}"
   enable_monitoring           = var.enable_monitoring
   spot_price                  = var.spot_price
   placement_tenancy           = var.spot_price == "" ? var.placement_tenancy : ""
