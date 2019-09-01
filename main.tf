@@ -30,7 +30,7 @@ resource "aws_launch_configuration" "this" {
   count = var.create_lc ? 1 : 0
 
   #name_prefix                 = "${coalesce(var.lc_name, var.name)}-"
-  name_prefix                 = "${module.naming_convention.lanch_configuration}-${coalesce(var.lc_name, var.name)}"
+  name_prefix                 = "${module.naming_convention.name_prefix}-${coalesce(var.lc_name, var.name)}-lc"
   image_id                    = var.image_id
   instance_type               = var.instance_type
   iam_instance_profile        = var.iam_instance_profile
@@ -88,7 +88,7 @@ resource "aws_launch_configuration" "this" {
 resource "aws_autoscaling_group" "this" {
   count = var.create_asg && false == var.create_asg_with_initial_lifecycle_hook ? 1 : 0
 
-  name_prefix                 = "${module.naming_convention.autoscaling_group}-${coalesce(var.lc_name, var.name)}"
+  name_prefix                 = "${module.naming_convention.name_prefix}-${coalesce(var.lc_name, var.name)}-asg"
 
   # name_prefix = "${join(
   #   "-",
