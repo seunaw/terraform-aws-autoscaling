@@ -5,12 +5,12 @@ locals {
 # @STOPPED - add parameters
 # @TODO - change source to a variable
 module "naming_convention" {
-  source    = "git::git@github.com:seunaw/terraform-naming-convention.git"
-  team      = var.team
-  service   = var.service
-  env       = var.env
-  component = var.component
-  region    = var.aws_region
+  source      = "git::git@github.com:seunaw/terraform-naming-convention.git"
+  team        = var.team
+  service     = var.service
+  env         = var.env
+  component   = var.component
+  aws_region  = var.aws_region
 }
 
 # module "core_infra_defaults" {
