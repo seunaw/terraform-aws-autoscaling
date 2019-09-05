@@ -2,8 +2,9 @@ locals {
   ssh_key = "${var.aws_region}-ssh_key"
 }
 
-# @STOPPED - add parameters
-# @TODO - change source to a variable
+
+# @TODO - remove modules from thie file, file should be generic
+# and modules should be add at the company level
 module "naming_convention" {
   source      = "git::git@github.com:seunaw/terraform-naming-convention.git"
   team        = var.team
