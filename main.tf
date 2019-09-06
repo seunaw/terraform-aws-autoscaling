@@ -31,12 +31,12 @@ resource "aws_launch_configuration" "this" {
   count = var.create_lc ? 1 : 0
 
   #name_prefix                 = "${coalesce(var.lc_name, var.name)}-"
-  name_prefix                 = "${module.naming_convention.name_prefix}-${coalesce(var.lc_name, var.name)}-lc"
+  name_prefix                 = "${coalesce(var.lc_name, var.name)}"
   image_id                    = var.image_id
   instance_type               = var.instance_type
   iam_instance_profile        = var.iam_instance_profile
-  key_name                    = "${coalesce(var.key_name,local.ssh_key)}"
-  security_groups             = "${concat(module.core_infra_defaults.default_security_groups,var.security_groups)}"
+  key_name                    = var.key_name
+  security_groups             = var.security_groups
   associate_public_ip_address = var.associate_public_ip_address
   
   #user_data                   = var.user_data
