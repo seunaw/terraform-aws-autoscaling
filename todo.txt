@@ -1,0 +1,2 @@
+- Fix name of asg currently has 'lc' in the name
+	terraform-testing-lc-20200326022307416800000002

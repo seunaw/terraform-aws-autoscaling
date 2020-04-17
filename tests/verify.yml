@@ -1,0 +1,27 @@
+---
+- set_fact:
+    label: "verify | ASG |"
+
+
+- name: "{{ label }} Checking Autoscaling Group"
+  ec2_asg_info:
+    name: terraform-testing-
+    tags:
+      asg_name: terraform-testing-asg
+  register: asg_info
+  failed_when: >
+    (asg_info.results[0].desired_capacity != ( asg_info.results[0].instances | length)) or 
+    (asg_info.results[0].launch_config_name is defined and asg_info.results[0].launch_config_name == "") or
+    (asg_info.results[0].launch_config_name is not defined ) or
+    (asg_info.results[0].max_size != 1 ) or
+    (asg_info.results[0].max_size != 1 )
+
+- debug:
+    var: asg_info
+    verbosity: 2
+
+
+# @TODO add more tests for launch config and with_initial_lifecycle_hook
+
+
+

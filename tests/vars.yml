@@ -1,0 +1,4 @@
+name: "terraform-testing"
+# vpc_subnets: ["subnet-038e269543d809aaa"]
+region: us-west-2
+image_id: ami-0a11b063496cf57d8
