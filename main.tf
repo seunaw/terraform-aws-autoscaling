@@ -4,7 +4,7 @@
 resource "aws_launch_configuration" "this" {
   count = var.create_lc ? 1 : 0
 
-  name_prefix                 = "${coalesce(var.lc_name, var.name)}-"
+  name                        = coalesce(var.lc_name, var.name)
   
   image_id                    = var.image_id
   instance_type               = var.instance_type
