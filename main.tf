@@ -169,7 +169,7 @@ resource "aws_autoscaling_group" "this_with_initial_lifecycle_hook" {
     default_result          = var.initial_lifecycle_hook_default_result
   }
 
-  tags = var.tags,
+  tags = var.tags
 
   # tags = concat( 
   #   var.tags,
