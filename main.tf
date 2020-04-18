@@ -62,7 +62,8 @@ resource "aws_launch_configuration" "this" {
 resource "aws_autoscaling_group" "this" {
   count = var.create_asg && false == var.create_asg_with_initial_lifecycle_hook ? 1 : 0
 
-  name_prefix                 = "${coalesce(var.asg_name, var.name)}-"
+  #name_prefix                 = "${coalesce(var.asg_name, var.name)}-"
+  name                 = coalesce(var.asg_name, var.name)
 
   # name_prefix = "${join(
   #   "-",
